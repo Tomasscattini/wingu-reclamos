@@ -5,12 +5,12 @@ export const AppContext = createContext()
   
 export const AppCtxProvider = props => { 
     const [ reclamosList, setReclamosList ] = useState([]);
+    const db = firebase.firestore();
 
     useEffect(async () => {
         getReclamosList();
     }, []);
 
-    const db = firebase.firestore();
 
     const getReclamosList = () => {
         db.collection('reclamos').onSnapshot(snapshot => {
@@ -21,8 +21,7 @@ export const AppCtxProvider = props => {
     };
 
     const addReclamo = (reclamo) => {
-        if(reclamo.imagen.length === 0) reclamo.imagen = 'https://www.essdetbol.ru/images/no_photo.png';
-        db.collection('reclamos').doc().set({...reclamo, imagen: reclamo.imagen});
+        db.collection('reclamos').doc().set(reclamo);
     };
 
     const getReclamo = async (id) => {

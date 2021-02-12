@@ -7,7 +7,8 @@ const ReclamosList = () => {
 
     return  (
         <main className="col-12 col-md-6 p-4">
-            {reclamosList.length > 0 ? reclamosList.map(reclamo => {
+            {reclamosList.length > 0 ? <><h3 className="mb-4">Reclamos vigentes:</h3>
+            {reclamosList.map(reclamo => {
                 reclamo.comuna = reclamo.comuna.replace('comuna', 'Comuna ')
                 
                 return (<Link to={`/reclamo/${reclamo.id}`} key={reclamo.titulo + reclamo.id} style={{textDecoration: 'none', color: 'black'}}>
@@ -16,7 +17,7 @@ const ReclamosList = () => {
                             <p className="card-title"><strong>{reclamo.titulo}</strong></p>
                         </div>
                         <div className="card-body">
-                            <img className="card-img-top" src={reclamo.imagen} alt={reclamo.titulo} />
+                            <img className="card-img-top mb-4" src={reclamo.imagen || 'https://www.essdetbol.ru/images/no_photo.png'} alt={reclamo.titulo} />
                             <p>{reclamo.descripcion}</p>
                         </div>
                         <div className="card-footer">
@@ -24,7 +25,7 @@ const ReclamosList = () => {
                         </div>
                     </div>
                 </Link>
-            )}) : <h3>No hay reclamos</h3>}
+            )})}</> : <h3>No hay reclamos</h3>}
         </main>
     )
 };

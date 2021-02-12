@@ -20,7 +20,7 @@ const ReclamosDetails = ({match: { params: {id}}}) => {
                     <p className="card-title">{reclamo.titulo}</p>
                 </div>
                 <div className="card-body">
-                    <img className="card-img-top" src={reclamo.imagen} alt={reclamo.titulo} />
+                    <img className="card-img-top" src={reclamo.imagen || 'https://www.essdetbol.ru/images/no_photo.png'} alt={reclamo.titulo} />
                     <p>{reclamo.descripcion}</p>
                 </div>
                 <div className="card-footer">

@@ -1,7 +1,10 @@
 import React, { useReducer, useState } from 'react'
 import { useContextInfo } from '../context'
+import firebase from '../service/firebasedb';
+const storage = firebase.storage();
 
 const Form = ({history}) => {
+    const [ loading, setLoading ] = useState(false);
     const [ invalidTitulo, setInvalidTitulo ] = useState(false);
     const [ invalidDescripcion, setInvalidDescripcion ] = useState(false);
     const [ invalidComuna, setInvalidComuna ] = useState(false);
@@ -26,10 +29,26 @@ const Form = ({history}) => {
        inputValidation(name, value);
     };
 
+    function handleFileChange(e) {
+        if (e.target.files[0]) {
+            setLoading(true);
+            const imgToLoad = e.target.files[0];
+            const uploadImage = storage.ref(`images/${imgToLoad.name}`).put(imgToLoad);
+            uploadImage.on('state_changed', snapshot => {}, error => console.log(error), () => {
+                storage.ref('images').child(imgToLoad.name).getDownloadURL().then(url => {
+                    setFormValues({imagen: url});
+                    setLoading(false);
+                });
+            });
+        };
+    };
+
     async function handleFormSubmit(e) {
         e.preventDefault();
         if (!inputValidation('titulo', titulo) || !inputValidation('descripcion', descripcion) || !inputValidation('comuna', comuna)) return;
+        setLoading(true);
         await addReclamo(formValues);
+        setLoading(false);
         setFormValues({...initialValues});
     };
 
@@ -62,12 +81,12 @@ const Form = ({history}) => {
             <div className="form-group">
                 <label className="form-label" htmlFor="titulo">Título del reclamo<span style={{color: 'red'}}>*</span>:</label>
                 <input className="form-control" id="titulo" type="text" name="titulo" value={titulo} placeholder="Pérdida de gas..." onChange={handleFormChange} />
-                {invalidTitulo && <div class="alert alert-danger" role="alert">Por favor ingresa el título de tu reclamo</div>}
+                {invalidTitulo && <div className="alert alert-danger" role="alert">Por favor ingresa el título de tu reclamo</div>}
             </div>
             <div className="form-group">
                 <label className="form-label" htmlFor="descripcion">Descripción<span style={{color: 'red'}}>*</span>:</label>
                 <textarea className="form-control" id="descripcion" name="descripcion" value={descripcion} rows="4" onChange={handleFormChange}></textarea>
-                {invalidDescripcion && <div class="alert alert-danger" role="alert">Por favor escribi tu reclamo</div>}
+                {invalidDescripcion && <div className="alert alert-danger" role="alert">Por favor escribi tu reclamo</div>}
             </div>
             <div className="form-group">
                 <label className="form-label" htmlFor="comuna">Comuna<span style={{color: 'red'}}>*</span>:</label>
@@ -90,13 +109,13 @@ const Form = ({history}) => {
                     <option value="comuna14">Comuna 14 (Palermo)</option>
                     <option value="comuna15">Comuna 15 (Chacarita, Villa Crespo, La Paternal, Villa Ortúzar, Agronomía y Parque Chas)</option>
                 </select>
-                {invalidComuna && <div class="alert alert-danger" role="alert">Por favor ingresa tu comuna</div>}
+                {invalidComuna && <div className="alert alert-danger" role="alert">Por favor ingresa tu comuna</div>}
             </div>
             <div className="form-group">
                 <label className="form-label" htmlFor="imagen">Imagen:</label>
-                <input className="form-control" id="imagen" type="file" name="imagen" value={imagen} placeholder="Imagen" onChange={handleFormChange} />
+                <input className="form-control" id="imagen" type="file" name="imagen" placeholder="Imagen" onChange={handleFileChange} />
             </div>
-            <button className="btn btn-primary mt-4 float-right btn-block" type="submit">Enviar reclamo</button>
+            <button className="btn btn-primary mt-4 float-right btn-block" type="submit" disabled={loading}>Enviar reclamo</button>
         </form>
     )
 }
