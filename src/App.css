@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+.carousel .slide {
+  background-color: transparent!important;
+}
+
+.carousel .carousel-status {
+  color: black!important;
+  text-shadow: none!important;
+  font-weight: bold;
+}
+
+.carousel .control-dots .dot {
+  background-color: #2C9BF4!important;
+}
+
+.carousel .control-dots {
+  margin-bottom: 0!important;
+}
